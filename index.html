@@ -27,15 +27,34 @@
       >
         🚀 Kirim ke Webhook
       </button>
+
+      <!-- Notifikasi -->
+      <div id="notification" class="hidden mt-4 p-4 rounded-lg text-white font-medium text-center"></div>
     </div>
 
     <script>
-      const webhookUrl = "https://1912-140-213-43-50.ngrok-free.app/webhook-test/andy";
+      const webhookUrl = "https://1912-140-213-43-50.ngrok-free.app/webhook/andy";
 
-      function triggerWebhook() {
+      async function triggerWebhook() {
         const message = document.getElementById("message").value || "No message";
         const url = `${webhookUrl}?_t=${Date.now()}&msg=${encodeURIComponent(message)}`;
-        window.open(url, "_blank");
+        const notif = document.getElementById("notification");
+
+        try {
+          const response = await fetch(url, { method: "GET" });
+          if (response.ok) {
+            notif.textContent = "✅ Pesan berhasil dikirim!";
+            notif.className = "mt-4 p-4 rounded-lg text-white font-medium text-center bg-green-500/80 backdrop-blur-md";
+          } else {
+            notif.textContent = "❌ Gagal mengirim pesan (server error).";
+            notif.className = "mt-4 p-4 rounded-lg text-white font-medium text-center bg-red-500/80 backdrop-blur-md";
+          }
+        } catch (error) {
+          notif.textContent = "⚠️ Gagal mengirim pesan (network error).";
+          notif.className = "mt-4 p-4 rounded-lg text-white font-medium text-center bg-yellow-500/80 backdrop-blur-md";
+        }
+
+        notif.classList.remove("hidden");
       }
     </script>
   </body>
